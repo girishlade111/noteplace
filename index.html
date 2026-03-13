@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<head>
+  <title>Noteplace</title>
+  <meta charset="utf-8">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="jquery.ui.rotatable.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+  <LINK rel="stylesheet" href="style.css" type="text/css">
+  <script src="https://kit.fontawesome.com/79df4a17eb.js" crossorigin="anonymous"></script>
+  <script defer src="bs_icons.js"></script>  
+  <meta name="google-site-verification" content="pTaTT_vGqPKQm-WzyqbuDB8Iw7y3MzcO17Pll-n6owQ" />
+</head>
+<body>
+  <!-- https://startbootstrap.com/previews/simple-sidebar -->
+  <div class="d-flex toggled" id="wrapper">
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading">Start Bootstrap </div>
+      <ul class="list-unstyled ps-0 d-grid gap-2">
+        <li class="mb-1 d-grid gap-2">
+          <div id="np-places-header">
+            <button id="btnPlaces" class="btn btn-toggle align-items-center collapsed places-name" data-bs-toggle="collapse" data-bs-target="#places-collapse" aria-expanded="false">
+              Places
+            </button>
+            <button class="btn" onclick="gotoState({T:[0,0],S:1},0);" title="Home">
+              <i class="bi-house-door"></i>
+            </button>
+            <button class="btn" title="New folder" id="btnNewHomeSubFolder">
+              <i class="bi-folder-plus"></i>
+            </button>
+            <button class="btn" title="New place" id="btnNewHomeSubPlace">
+              <i class="bi-plus-square-dotted"></i>
+            </button>
+            <button class="btn" title="Temp copy current place" id="btnSaveView">
+              <i class="bi-stickies"></i>
+            </button>
+          </div>
+          <div class="collapse" id="places-collapse">
+            <ul id="places-root" class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+
+            </ul>
+          </div>
+        </li>
+        <li class="mb-1">
+          <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+            Landmarks
+          </button>
+          <div class="collapse" id="dashboard-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              <li><a href="#" class="link-dark rounded">TODO</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="mb-1">
+          <div id="np-history-header">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
+              History
+            </button>
+            <button class="btn" id="btnHistoryStatus">
+              <i class="bi-calendar2"></i>
+            </button>
+            <button id="btnUndo" class="btn" title="Undo">
+              <i class="bi-arrow-90deg-left"></i>
+            </button>
+            <button id="btnRedo" class="btn" title="Redo">
+              <i class="bi-arrow-90deg-right"></i>
+            </button>
+            <button class="btn" id="btnHistoryClear" title="Clear history">
+              <i class="bi-calendar2-x"></i>
+            </button>
+          </div>
+          <div class="collapse" id="orders-collapse">
+            <div id="historyContainer" class="container">
+              
+            </div>
+            <!-- <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ">
+              <li><a href="#" class="link-dark rounded">TODO</a></li>
+            </ul> -->
+          </div>
+        </li>
+        <li class="border-top my-3"></li>
+        <!-- <li class="mb-1">
+          <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
+            Account
+          </button>
+          <div class="collapse" id="account-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              <li><a href="#" class="link-dark rounded">New...</a></li>
+              <li><a href="#" class="link-dark rounded">Profile</a></li>
+              <li><a href="#" class="link-dark rounded">Settings</a></li>
+              <li><a href="#" class="link-dark rounded">Sign out</a></li>
+            </ul>
+          </div>
+        </li> -->
+        <li class="mb-1 mt-auto">
+          <a href="https://github.com/eugenpt/noteplace" class="list-group-item list-group-item-action bg-light pb-4"><i class="bi-github"></i>&nbspNoteplace on GitHub</a>
+        </li>
+      </ul>
+    </div>
+  <div id="page-content-wrapper">  
+
+  <!-- <div class="notification-top"> -->
+    <nav id="navbar" class="navbar navbar-light bg-light container-fluid justify-content-start">
+      <a id="menu-toggle" class="btn btn-outline-secondary"><i class="bi-list-ul"></i></a>
+      <button id="btnSaveFast" class="btn btn-outline-secondary">💾</button>
+      <div class="d-flex" style="display: none!important;">
+        <input type="number" id="number" value=100>
+        <button id="btnAddLots" class="btn btn-outline-success">ADD!</button>
+      </div>
+      <!-- Example single danger button -->
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Menu
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" id="btnRestart" data-bs-toggle="modal" data-bs-target="#modalYesNo">New Noteplace</a>
+          <a class="dropdown-item" id="btnClear" data-bs-toggle="modal" data-bs-target="#modalYesNo">Clear Noteplace</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" id="save" data-bs-toggle="modal" data-bs-target="#exampleModal">Save to local file</a>
+          <a class="dropdown-item" href="">
+            <label for="file">
+              Load from a local file<input type="file" id="file" name="file">
+            </label>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item"><img style="height: 32px;" src="https://firebasestorage.googleapis.com/v0/b/drive-assets.google.com.a.appspot.com/o/Asset%20-%20Google%20Drive%20Lockup.png?alt=media" alt="Google Drive™">:</a>
+          <a class="dropdown-item" id="authorize_button">Authorize</a>
+          <a class="dropdown-item authorize-only" id="save_gdrive"><img style="height:16px" src="https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-64dp/logo_drive_2020q4_color_2x_web_64dp.png" alt="Google Drive™"> Save</a>
+          <a class="dropdown-item authorize-only" id="saveas_gdrive" data-bs-toggle="modal" data-bs-target="#exampleModal"><img style="height:16px" src="https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-64dp/logo_drive_2020q4_color_2x_web_64dp.png" alt="Google Drive™"> Save as..</a>
+          <a class="dropdown-item authorize-only" id="load_gdrive" data-bs-toggle="modal" data-bs-target="#exampleModal"><img style="height:16px" src="https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/web-64dp/logo_drive_2020q4_color_2x_web_64dp.png" alt="Google Drive™"> Load</a>
+          <a class="dropdown-item" id="signout_button">Sign Out</a>
+        </div>
+      </div>
+      <button id="btnPaletteToggle" class="btn btn-outline-primary" title="Icon palette" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePallette" aria-expanded="false" aria-controls="collapsePallette">
+        <i class="bi-palette"></i>
+      </button>
+      <button id="btnFreehand" class="btn btn-outline-primary" title="Draw something">
+        <i class="bi-pen"></i>
+      </button>
+      <!-- <button id="btnSaveView" class="btn btn-secondary" type="button">
+        Save View
+      </button> -->
+      
+    <!-- </div> -->
+    <div>
+      <div class="collapse" id="collapsePallette">
+        <div class="container card card-body">
+          <form class="form-inline">
+
+            <input type="text" class="form-control"  id="inputIconSearch" placeholder="Search icons..">
+
+          </form>
+          <div class='container-fluid card card-body horizontal-scrollable'>
+            <div id="palette-row"  class="row flex-row flex-nowrap">
+            </div>
+          </div>
+          <!-- 'Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.' -->
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div id="container" class="container-fluid">
+    <div id="freehandField" class="w-100 h-100" style="display: none;"></div>
+    <div id="select-box"></div>
+    <div id="node_container" class="w-100 h-100">
+
+    </div>
+    <div style="display: none;" class="navbar navbar-expand-sm border border-dark container-fluid position-absolute bottom-0">
+      <p>
+        <textarea id="text"></textarea> 
+        FontSize:<input type="number" step="10" id="fontSize">
+        <button id="btnFontMinus" class="btn btn-outline-secondary">-</button>
+        <button id="btnFontPlus" class="btn btn-outline-secondary">+</button>
+        <span id="status"></span>
+      </p>
+    </div>
+
+    <div id="searchSideBar" class="position-fixed end-0 h-100 bg-light toggled">
+      <button id="search-toggle" class="position-fixed sm-n5 mb-1" title="Search! (Ctrl/Cmd-F / F3)"><i class="bi-search"></i></button>
+      <div id="scale-box" class="position-fixed b-1 sm-n5 mb-1">
+        <button id="btnZoomIn" class="btn btn-outline-secondary">➕</button>
+        <button id="btnZoomOut" class="btn btn-outline-secondary">➖</button>
+        <!-- <i class="bi-search"></i> -->
+      </div>
+      <div class="container row my-1">
+        <input type="text" id="searchInput">
+      </div>
+      <div class="container h-100" id="searchResultContainer">
+      </div>
+    </div>
+  </div>
+
+
+  
+</div>
+  <!-- </div> -->
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-4" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Save file</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group" id="modal-input-group">
+            <label for="modal-input" class="col-form-label">Filename:</label>
+            <input type="text" class="form-control my-2" id="modal-input">
+          </div>
+          <div id="modal-list" class="container">
+            
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="document.getElementById('modal-save').style.display='block';">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="modal-save">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="modalYesNo" tabindex="-2" role="dialog" aria-labelledby="modalYesNoLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalYesNoLabel">Yes Or No?</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="modalYesNoBody">
+          Are you sure ??
+        </div>  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modalYesNo-No">No</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="modalYesNo-Yes">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div class="toast align-items-center hide" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          Hello, world! This is a toast message.
+        </div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>  <script src="jquery.mousewheel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/remarkable/1.7.1/remarkable.min.js"></script>
+
+  <script src="universal.js"></script>
+  <script src="gdrive.js"></script>
+
+
+  <script src="consts.js"></script>
+  <script src="view.js"></script>
+  <script src="nodes_default.js"></script>
+  <script src="nodes.js"></script>
+  <script src="links.js"></script>
+  <script src="places.js"></script>
+  <script src="history.js"></script>
+  <script src="freehand.js"></script>
+  <script src="localStorage.js"></script>
+  <script src="main.js"></script>
+  <script src="search.js"></script>
+  <script src="files.js"></script>
+
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WMZN3SVWKD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-WMZN3SVWKD');
+  </script>
+</body>
